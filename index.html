@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Smart Study Advanced</title>
+
+<style>
+body {
+  font-family: Arial;
+  background:#0f172a;
+  color:white;
+  padding:20px;
+}
+
+.card {
+  background:#1e293b;
+  padding:15px;
+  margin:10px;
+  border-radius:10px;
+}
+
+button {
+  padding:8px;
+  margin:5px;
+  cursor:pointer;
+}
+
+input {
+  padding:8px;
+  width:70%;
+}
+
+.grid {
+  display:grid;
+  grid-template-columns:repeat(7, 20px);
+  gap:5px;
+}
+
+.box {
+  width:20px;
+  height:20px;
+  background:#334155;
+}
+
+.active {
+  background:limegreen;
+}
+
+.tree {
+  font-size:30px;
+  text-align:center;
+}
+
+.lock {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:black;
+  color:white;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>Smart Study Planner 🚀</h1>
+
+<!-- 🌳 FOREST -->
+<div class="card">
+<h2>Forest Focus 🌱</h2>
+
+<input id="timeInput" placeholder="Seconds">
+<button onclick="startForest()">Start</button>
+
+<div id="tree" class="tree">🌱</div>
+<p id="timer"></p>
+
+</div>
+
+<!-- 📅 TIMETABLE -->
+<div class="card">
+<h2>Timetable</h2>
+
+<input id="taskInput">
+<button onclick="addTask()">Add</button>
+
+<ul id="taskList"></ul>
+
+</div>
+
+<!-- 🎯 GOAL -->
+<div class="card">
+<h2>Goal Tracker</h2>
+
+<input id="goalInput" placeholder="Enter goal">
+<button onclick="setGoal()">Set Goal</button>
+
+<p id="goalText"></p>
+<p id="goalProgress"></p>
+
+</div>
+
+<!-- 🔥 STREAK -->
+<div class="card">
+<h2>Study Streak</h2>
+<p id="streak">🔥 0 days</p>
+<button onclick="increaseStreak()">Mark Today Done</button>
+</div>
+
+<!-- 📊 HEATMAP -->
+<div class="card">
+<h2>Study Heatmap</h2>
+<div class="grid" id="heatmap"></div>
+</div>
+
+<!-- 🌬️ BREATHING -->
+<div class="card">
+<h2>Breathing Mode</h2>
+<p id="breath">Ready</p>
+<button onclick="startBreathing()">Start</button>
+</div>
+
+<!-- 🎮 FOCUS MODE -->
+<div class="card">
+<h2>Focus Mode</h2>
+<button onclick="startFocus()">Start Focus</button>
+</div>
+
+<div class="lock" id="lockScreen">
+<h1>FOCUS MODE</h1>
+<p id="focusTimer"></p>
+<button onclick="stopFocus()">Exit</button>
+</div>
+
+<script>
+
+// 🌳 FOREST
+function startForest() {
+  let time = parseInt(document.getElementById("timeInput").value);
+  let tree = document.getElementById("tree");
+  let timer = document.getElementById("timer");
+
+  if (!time) return alert("Enter time");
+
+  let total = time;
+
+  let interval = setInterval(() => {
+    time--;
+    timer.innerText = "Time: " + time;
+
+    let growth = Math.floor(((total - time) / total) * 10);
+    tree.innerText = "🌱".repeat(growth);
+
+    if (time <= 0) {
+      clearInterval(interval);
+      tree.innerText = "🌳 FULL TREE!";
+    }
+  }, 1000);
+}
+
+// 📅 TIMETABLE
+let completedTasks = 0;
+
+function addTask() {
+  let val = document.getElementById("taskInput").value;
+  if (!val) return;
+
+  let li = document.createElement("li");
+  li.innerText = val;
+
+  li.onclick = function () {
+    li.style.textDecoration = "line-through";
+    completedTasks++;
+    updateGoal();
+    updateHeatmap();
+  };
+
+  document.getElementById("taskList").appendChild(li);
+}
+
+// 🎯 GOAL
+let goal = 0;
+
+function setGoal() {
+  goal = parseInt(document.getElementById("goalInput").value);
+  document.getElementById("goalText").innerText = "Goal: " + goal;
+}
+
+function updateGoal() {
+  document.getElementById("goalProgress").innerText =
+    "Progress: " + completedTasks + "/" + goal;
+}
+
+// 🔥 STREAK
+let streak = 0;
+
+function increaseStreak() {
+  streak++;
+  document.getElementById("streak").innerText = "🔥 " + streak + " days";
+}
+
+// 📊 HEATMAP
+let heatmap = document.getElementById("heatmap");
+
+for (let i = 0; i < 35; i++) {
+  let div = document.createElement("div");
+  div.className = "box";
+  heatmap.appendChild(div);
+}
+
+function updateHeatmap() {
+  let boxes = document.querySelectorAll(".box");
+  boxes[Math.floor(Math.random() * boxes.length)].classList.add("active");
+}
+
+// 🌬️ BREATHING
+function startBreathing() {
+  let steps = ["Inhale...", "Hold...", "Exhale..."];
+  let i = 0;
+
+  setInterval(() => {
+    document.getElementById("breath").innerText = steps[i];
+    i = (i + 1) % 3;
+  }, 2000);
+}
+
+// 🎮 FOCUS MODE
+function startFocus() {
+  let lock = document.getElementById("lockScreen");
+  lock.style.display = "flex";
+
+  let time = 10;
+  let timer = document.getElementById("focusTimer");
+
+  let interval = setInterval(() => {
+    time--;
+    timer.innerText = "Time: " + time;
+
+    if (time <= 0) {
+      clearInterval(interval);
+      lock.style.display = "none";
+    }
+  }, 1000);
+}
+
+function stopFocus() {
+  document.getElementById("lockScreen").style.display = "none";
+}
+
+</script>
+
+</body>
+</html>
